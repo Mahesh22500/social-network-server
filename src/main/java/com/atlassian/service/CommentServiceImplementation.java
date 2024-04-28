@@ -53,6 +53,24 @@ public class CommentServiceImplementation implements CommentService {
 		
 		return savedComment;
 	}
+	
+	public Comment deleteComment(Integer commentId,Integer postId,Integer userId) throws Exception {
+	
+		Comment comment = findCommentById(commentId);
+		User user = userService.findUserById(userId);
+		Post post = postService.findPostById(postId);
+		
+		if(comment.getUser().getId() != userId) {
+			throw new Exception("cant delete another persons comment");
+		}
+		
+		post.getComments().remove(comment);
+		postRepository.save(post);
+		
+		commentRepository.delete(comment);
+		
+		return comment;
+	}
 
 	@Override
 	public Comment likeComment(Integer commentId, Integer userId) throws Exception {
